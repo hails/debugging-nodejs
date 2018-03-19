@@ -14,11 +14,12 @@ Para simular um caso mais próximo da realidade, estou disponibilizando como bas
 Nossa aplicação é uma API CRUD (acrônimo de Create Read Update Delete) para cadastro de usuários.
 
 As rotas são as seguintes:
+
 | Verbo HTTP | Rota | O que faz |
-| ---------- | ---- | --------- |
-| GET        | /api/users | Lista todos os usuários cadastrados |
-| GET        | /api/users/:user_id | Lista o usuário de id `:user_id` |
-| POST       | /api/users | Cria um novo usuário |
+| ---|  --- | ---|
+| GET | /api/users | Lista todos os usuários cadastrados |
+| GET | /api/users/:user_id | Lista o usuário de id `:user_id` |
+| POST | /api/users | Cria um novo usuário |
 
 >Para criar um novo usuário, deve-se enviar um JSON com os seguintes campos: `username`, `real_name` e `country`.
 >
@@ -250,9 +251,36 @@ Olhando mais de perto, repare no circulo vermelho ao lado da linha 21:
 
 ![](images/debug-breakpoint-zoomed-line-21.png)
 
-Agora, toda vez que o arquivo for executado, a execução pausará nessa linha.
+Toda vez que o arquivo for executado, a execução pausará nessa linha.
 
 Já com a aplicação rodando em modo `debug`, vamos fazer novamente um request para criar um usuário:
+```sh
+$ echo '{"username": "hails", "real_name": "Allan Jorge", "country": "BR"}' | http post :3000/api/users
+```
+Perceba que não recebemos uma resposta, isso porque a aplicação está "congelada" na linha 21, esperando que tomemos alguma ação!
+Então, agora, temos que descobrir onde está o problema e para isso iremos no menu `VARIABLES`, no canto esquerdo.
+Aqui conseguimos ver todas as variáveis que estão dentro dos nossos contextos (`Local`, `Closure` e `Global`)
+
+![](images)
+
+No caso, vamos espiar em como está o objeto `user`, dentro de `Local`:
+![](images)
+
+**HOLY JESUS**  
+Todas as chaves estão com os valores `undefined`, a não ser o `user_id`.  
+Como pegamos esses valores do `req.params`, podemos inspecioná-lo a partir do objeto `req` 
+![](images)
+O objeto `req.params` está vazio, por isso quanto tentamos pegar os valores dele para o objeto `user`, acaba retornando `undefined`.
+
+Para os mais experientes com o Express, está na cara o erro: o `body` do verbo HTTP `POST` no Express não fica em `req.params`, e sim em `req.body` pois usei um `middleware` chamado `body-parser`.
+Podemos validar isso inspecionando o objeto `body`, como fizemos com o `params`:
+![](images)
+**AHA!**
+Achamos então onde de fato estão as informações que precisamos!
+
+Agora é só [alterar o código](), referenciando `req.body` ao invés de `req.params` e rodar a aplicação normalmente.
+
+
 
 ### Não uso o VS Code, e agora?
 
