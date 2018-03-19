@@ -5,7 +5,7 @@ Mas conforme a coisa vai ficando séria, se torna cada vez mais dificil extrair 
 
 ## Se preparando
 
-Nesse artigo, iremos usar o [Chrome DevTools](https://developer.chrome.com/devtools) e o [VS Code](https://code.visualstudio.com/) como frontend para o debugger do Node.js, podendo escolher o que melhor se adequar às suas necessidades.
+Nesse artigo, iremos usar o [VS Code](https://code.visualstudio.com/) como frontend para o debugger do Node.js.
 
 Para simular um caso mais próximo da realidade, estou disponibilizando como base uma simples aplicação feita usando `Node.js 9.3.0` e `Express 4`. A aplicação está disponível [nesse repositório](https://github.com/hails/debugging-nodejs).
 
@@ -296,3 +296,24 @@ Vamos testar para ver se está tudo ocorrendo como deveria
   $ echo '{"username": "hails", "real_name": "Allan Jorge", "country": "BR"}' | http post :3000/api/users
   ```
 - Response
+  ```sh
+  {
+    "country": "BR",
+    "real_name": "Allan Jorge",
+    "user_id": 0,
+    "username": "hails"
+  }
+  ```
+
+**FUNCIONA**
+
+Em poucos passos conseguimos achar onde estava o problema, sem ter que nos descabelar em meio de um mar de `console.log` e sem ter que alterar uma linha da aplicação em si.
+
+## Considerações finais
+
+Esse artigo foi mais uma leve introdução do quão prático e fácil pode ser o seu uso no dia-a-dia.  
+Usar o Inspector do Node.js pode ajudar muito a debuggar comportamentos estranhos, entender conceitos como Closures ou simplesmente entender mais os internals da V8, acompanhando o passo-a-passo de cada ação.  
+Além do VS Code, você pode também usar o Chrome DevTools e vários outros frontends, basta consultar a [documentação oficial do Inspector](https://nodejs.org/en/docs/inspector/) e ver o qual melhor atende às suas necessidades.
+
+Vou ficando por aqui, meu twitter é [@noneisone](http://twitter.com/noneisone) e meu Github é [@hails](https://twitter.com/noneisone)
+
