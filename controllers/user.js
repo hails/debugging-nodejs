@@ -11,9 +11,9 @@ const get = (req, res) => {
 
 const create = (req, res) => {
   const user = {
-    username: req.params.username,
-    real_name: req.params.real_name,
-    country: req.params.country
+    username: req.body.username,
+    real_name: req.body.real_name,
+    country: req.body.country
   }
   const userId = users.push(user)
   const userResponse = Object.assign(user, { user_id: userId - 1 })
