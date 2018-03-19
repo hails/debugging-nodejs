@@ -258,31 +258,41 @@ Já com a aplicação rodando em modo `debug`, vamos fazer novamente um request 
 $ echo '{"username": "hails", "real_name": "Allan Jorge", "country": "BR"}' | http post :3000/api/users
 ```
 Perceba que não recebemos uma resposta, isso porque a aplicação está "congelada" na linha 21, esperando que tomemos alguma ação!
-Então, agora, temos que descobrir onde está o problema e para isso iremos no menu `VARIABLES`, no canto esquerdo.
+Então, agora, temos que descobrir onde está o problema e para isso iremos no menu `VARIABLES`, no canto esquerdo.  
 Aqui conseguimos ver todas as variáveis que estão dentro dos nossos contextos (`Local`, `Closure` e `Global`)
 
-![](images)
+![](images/debug-variables.png)
 
-No caso, vamos espiar em como está o objeto `user`, dentro de `Local`:
-![](images)
+Vamos espiar em como está o objeto `user`, dentro de `Local`:
 
-**HOLY JESUS**  
-Todas as chaves estão com os valores `undefined`, a não ser o `user_id`.  
+![](images/debug-user-object.png)
+
+**HOLY JESUS**
+
+Todas as chaves estão com os valores `undefined`, a não ser o `user_id`.
+
 Como pegamos esses valores do `req.params`, podemos inspecioná-lo a partir do objeto `req` 
-![](images)
-O objeto `req.params` está vazio, por isso quanto tentamos pegar os valores dele para o objeto `user`, acaba retornando `undefined`.
 
-Para os mais experientes com o Express, está na cara o erro: o `body` do verbo HTTP `POST` no Express não fica em `req.params`, e sim em `req.body` pois usei um `middleware` chamado `body-parser`.
+![](images/debug-req-object.png)
+
+![](images/debug-req-params-object.png)
+
+O objeto `req.params` está vazio, por isso quando tentamos pegar os valores dele para o objeto `user`, acaba retornando `undefined`.
+
+Para os mais experientes com o Express, está na cara o erro: o `body` de um request `POST` no Express não fica em `req.params`, e sim em `req.body` pois usei um `middleware` chamado `body-parser`.  
 Podemos validar isso inspecionando o objeto `body`, como fizemos com o `params`:
-![](images)
+
+![](images/debug-req-body.png)
+
 **AHA!**
-Achamos então onde de fato estão as informações que precisamos!
 
-Agora é só [alterar o código](), referenciando `req.body` ao invés de `req.params` e rodar a aplicação normalmente.
+Achamos onde de fato estão as informações que precisamos!
 
+Agora é só [alterar o código](https://github.com/hails/debugging-nodejs/blob/e662e20a37e94bec10cda6b2d25ec7a0c24f015f/controllers/user.js#L13), referenciando `req.body` ao invés de `req.params` e rodar a aplicação normalmente.
 
-
-### Não uso o VS Code, e agora?
-
-#### Debugando com o Chrome DevTools
-
+Vamos testar para ver se está tudo ocorrendo como deveria
+- Request
+  ```sh
+  $ echo '{"username": "hails", "real_name": "Allan Jorge", "country": "BR"}' | http post :3000/api/users
+  ```
+- Response
